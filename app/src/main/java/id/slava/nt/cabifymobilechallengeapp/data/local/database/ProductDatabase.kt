@@ -1,8 +1,8 @@
-package id.slava.nt.cabifymobilechallengeapp.data.local
+package id.slava.nt.cabifymobilechallengeapp.data.local.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import id.slava.nt.cabifymobilechallengeapp.data.local.db_object.ProductEntity
+import id.slava.nt.cabifymobilechallengeapp.data.local.database.db_object.ProductEntity
 
 @Database(
     entities = [ProductEntity::class],

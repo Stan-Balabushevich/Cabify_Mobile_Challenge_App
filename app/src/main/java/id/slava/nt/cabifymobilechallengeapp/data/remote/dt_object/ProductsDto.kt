@@ -1,6 +1,6 @@
 package id.slava.nt.cabifymobilechallengeapp.data.remote.dt_object
 import com.google.gson.annotations.SerializedName
-import id.slava.nt.cabifymobilechallengeapp.data.local.db_object.ProductEntity
+import id.slava.nt.cabifymobilechallengeapp.data.local.database.db_object.ProductEntity
 
 
 data class ProductsDto(
@@ -17,7 +17,7 @@ data class ProductDto(
     val price: Double
 )
 
-fun ProductDto.toProductEntity(): ProductEntity{
+fun ProductDto.toProductEntity(): ProductEntity {
     return ProductEntity(
         code = code,
         name = name,

@@ -1,4 +1,4 @@
-package id.slava.nt.cabifymobilechallengeapp.data.local.db_object
+package id.slava.nt.cabifymobilechallengeapp.data.local.database.db_object
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

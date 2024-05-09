@@ -1,0 +1,14 @@
+{
+  "discounts": {
+    "VOUCHER": {
+      "type": "BuyXGetYFree",
+      "x": 2,
+      "y": 1
+    },
+    "TSHIRT": {
+      "type": "BulkDiscount",
+      "threshold": 3,
+      "discountedPrice": 19.00
+    }
+  }
+}

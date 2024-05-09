@@ -1,15 +1,18 @@
 package id.slava.nt.cabifymobilechallengeapp.presentation.products_list
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import id.slava.nt.cabifymobilechallengeapp.common.MUG
 import id.slava.nt.cabifymobilechallengeapp.common.Resource
 import id.slava.nt.cabifymobilechallengeapp.common.TSHIRT
 import id.slava.nt.cabifymobilechallengeapp.common.VOUCHER
 import id.slava.nt.cabifymobilechallengeapp.domain.model.CartItem
 import id.slava.nt.cabifymobilechallengeapp.domain.model.Product
+import id.slava.nt.cabifymobilechallengeapp.domain.usecase.GetDiscountRulesUseCase
 import id.slava.nt.cabifymobilechallengeapp.domain.usecase.GetProductsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,7 +26,8 @@ import kotlinx.coroutines.launch
  *             }
  */
 
-class ProductListViewModel(private val getProductsUseCase: GetProductsUseCase) :
+class ProductListViewModel(private val getProductsUseCase: GetProductsUseCase,
+                           private val getDiscountRulesUseCase: GetDiscountRulesUseCase) :
     ViewModel() {
 
     private val _products = mutableStateOf(ProductListState())
@@ -48,6 +52,23 @@ class ProductListViewModel(private val getProductsUseCase: GetProductsUseCase) :
     fun removeAllCartProducts() {
         _cartProducts.value = emptyList()
         cart.clear()
+    }
+
+   private fun getDiscountRules() {
+       viewModelScope.launch {
+           getDiscountRulesUseCase().collect {
+                   resource ->
+               when (resource) {
+                   is Resource.Loading -> {}
+
+                   is Resource.Success -> {
+                       Log.d("ProductListViewModel", "getDiscountRules: ${resource.data?.discounts}")
+                   }
+
+                   is Resource.Error -> {}
+               }
+           }
+       }
     }
 
     private fun addToCart(product: Product) {
@@ -116,6 +137,7 @@ class ProductListViewModel(private val getProductsUseCase: GetProductsUseCase) :
 
     init {
         loadProducts()
+        getDiscountRules()
     }
 
     private fun loadProducts() {

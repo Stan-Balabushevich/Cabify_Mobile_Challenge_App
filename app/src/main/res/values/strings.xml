@@ -10,6 +10,6 @@
     <string name="payment_made">The payment has been made</string>
     <string name="apply_discount">Apply discount</string>
     <string name="products_to_select">Products to select:</string>
-    <string name="products_selected">Selected products:</string>
+    <string name="products_selected">Selected products: %1$s</string>
     <string name="price_without_discount">Total price without discount: €%1$s</string>
 </resources>

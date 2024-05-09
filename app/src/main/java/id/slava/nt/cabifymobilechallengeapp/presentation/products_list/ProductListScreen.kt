@@ -89,7 +89,7 @@ fun ProductListScreen(viewModel: ProductListViewModel = koinViewModel()) {
             }
 
             Text(
-                text = stringResource(R.string.products_selected),
+                text = stringResource(R.string.products_selected, cartProducts.value.size),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
                     .padding(8.dp)

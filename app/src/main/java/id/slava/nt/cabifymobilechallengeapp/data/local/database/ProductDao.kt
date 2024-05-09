@@ -1,10 +1,10 @@
-package id.slava.nt.cabifymobilechallengeapp.data.local
+package id.slava.nt.cabifymobilechallengeapp.data.local.database
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import id.slava.nt.cabifymobilechallengeapp.data.local.db_object.ProductEntity
+import id.slava.nt.cabifymobilechallengeapp.data.local.database.db_object.ProductEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
