@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.map
 class ProductRepositoryImpl(
     private val api: ProductApi,
     private val dao: ProductDao
-): ProductRepository {
+) : ProductRepository {
 
     /**
      * Retrieves the list of products, updating from the API only if the local data is older than one day and
@@ -51,6 +51,8 @@ class ProductRepositoryImpl(
                 val remoteProducts = api.getProducts().products.map { it.toProductEntity() }
                 // Update each product's lastUpdated timestamp to the current time.
                 remoteProducts.forEach { it.lastUpdated = currentTime }
+                //Delete all products from the database to clean it before saving the updated list.
+                dao.deleteAllProducts()
                 // Save the updated list of products to the database.
                 dao.saveProducts(remoteProducts)
             } catch (e: Exception) {
@@ -61,6 +63,8 @@ class ProductRepositoryImpl(
         }
 
         // Emit the current list of products from the database.
-        emitAll(dao.getAllProducts().map { entities -> Resource.Success(entities.map { it.toProduct() } )})
+        emitAll(
+            dao.getAllProducts()
+                .map { entities -> Resource.Success(entities.map { it.toProduct() }) })
     }
 }

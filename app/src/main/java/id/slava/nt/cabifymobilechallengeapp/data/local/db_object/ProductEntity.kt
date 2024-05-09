@@ -16,7 +16,7 @@ data class ProductEntity(
 
 fun ProductEntity.toProduct(): Product {
     return Product(
-        int = id,
+        id = id,
         code = code,
         name = name,
         price = price
