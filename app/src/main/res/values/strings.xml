@@ -12,4 +12,15 @@
     <string name="products_to_select">Products to select:</string>
     <string name="products_selected">Selected products: %1$s</string>
     <string name="price_without_discount">Total price without discount: €%1$s</string>
+    <!-- Buy X Get Y Free Discount Description -->
+    <string name="buy_x_get_y_discount">Choose our products and you will have %1$d for %2$d (buy %1$d get %2$d free ) discount on %3$s.</string>
+
+    <!-- Bulk Discount Description -->
+    <string name="bulk_discount">If you buy %1$d or more %2$s items, the price per unit will be %3$.2f.</string>
+
+    <!-- No Discount Description -->
+    <string name="no_discount">No special discounts for %1$s.</string>
+
+    <!-- Error in loading discounts -->
+    <string name="error_loading_discounts">Failed to load discounts.</string>
 </resources>

@@ -39,12 +39,13 @@ fun ProductListScreen(viewModel: ProductListViewModel = koinViewModel()) {
     val totalPrice = cartProducts.value.sumOf { it.price}
     val showDiscountDialog = remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val discountDescriptionText = viewModel.discountDescriptions.value
 
 
     // Display discount dialog
     if (showDiscountDialog.value) {
         val counts = viewModel.countSpecificItems()
-        val total = viewModel.calculateTotal()
+        val total = viewModel.calculateTotalWithDiscount()
         DiscountDialog(counts = counts, total = total,
             onDismissDialog = { showDiscountDialog.value = false },
             onAcceptButton = {
@@ -69,13 +70,18 @@ fun ProductListScreen(viewModel: ProductListViewModel = koinViewModel()) {
         Column(modifier = Modifier
             .fillMaxSize()
             .padding(top = 50.dp)) {
-            Text(
-                stringResource(R.string.products_to_select),
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .align(Alignment.Start)
-            )
+//            Text(
+//                stringResource(R.string.products_to_select),
+//                style = MaterialTheme.typography.bodyLarge,
+//                modifier = Modifier
+//                    .padding(8.dp)
+//                    .align(Alignment.Start)
+//            )
+            Column(modifier = Modifier.padding(6.dp)) {
+                discountDescriptionText.forEach { description ->
+                    Text(text = description, style = MaterialTheme.typography.bodySmall)
+                }
+            }
 
             // Displaying the product to select list
             LazyColumn(modifier = Modifier
@@ -87,7 +93,6 @@ fun ProductListScreen(viewModel: ProductListViewModel = koinViewModel()) {
                     })
                 }
             }
-
             Text(
                 text = stringResource(R.string.products_selected, cartProducts.value.size),
                 style = MaterialTheme.typography.bodyLarge,

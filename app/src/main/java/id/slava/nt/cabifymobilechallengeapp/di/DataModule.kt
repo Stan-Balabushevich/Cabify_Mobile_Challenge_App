@@ -12,6 +12,7 @@ import id.slava.nt.cabifymobilechallengeapp.data.remote.ProductApi
 import id.slava.nt.cabifymobilechallengeapp.data.remote.RuntimeTypeAdapterFactory
 import id.slava.nt.cabifymobilechallengeapp.data.remote.dt_object.ProductDiscount
 import id.slava.nt.cabifymobilechallengeapp.data.repository.ProductRepositoryImpl
+import id.slava.nt.cabifymobilechallengeapp.data.util.getGsonWithTypeAdapterFactory
 import id.slava.nt.cabifymobilechallengeapp.domain.repository.ProductRepository
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -21,12 +22,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 val dataModule = module {
 
     // Gson with RuntimeTypeAdapterFactory for handling complex JSON for discounts
-    val gsonWithAdapterFactory: Gson = GsonBuilder()
-        .registerTypeAdapterFactory(
-            RuntimeTypeAdapterFactory.of(ProductDiscount::class.java, "type")
-                .registerSubtype(ProductDiscount.BuyXGetYFree::class.java, "BuyXGetYFree")
-                .registerSubtype(ProductDiscount.BulkDiscount::class.java, "BulkDiscount"))
-        .create()
+    val gsonWithAdapterFactory: Gson = getGsonWithTypeAdapterFactory()
 
     // Retrofit instance for Product API that does not require custom Gson
     single(named("productApi")) {

@@ -1,7 +1,7 @@
 package id.slava.nt.cabifymobilechallengeapp.data.repository
 
 import id.slava.nt.cabifymobilechallengeapp.R
-import id.slava.nt.cabifymobilechallengeapp.common.DISCOUNTS_RULES_FILE
+import id.slava.nt.cabifymobilechallengeapp.common.DISCOUNTS_RULES_FILE_NAME
 import id.slava.nt.cabifymobilechallengeapp.common.Resource
 import id.slava.nt.cabifymobilechallengeapp.data.local.database.ProductDao
 import id.slava.nt.cabifymobilechallengeapp.data.local.database.db_object.toProduct
@@ -86,6 +86,23 @@ class ProductRepositoryImpl(
     }
 
 
+    /**
+     * This segment of the code is part of a repository class responsible for fetching, caching, and providing fallback mechanisms for discount rules in an application. It uses a combination of Retrofit for network requests, Gson for JSON parsing, and a custom FileManager interface for file operations.
+     * Key Components
+     *
+     *     gsonWithRuntimeTypeAdapter:
+     *         A pre-configured Gson instance equipped with a RuntimeTypeAdapterFactory to handle polymorphic deserialization of JSON data into Kotlin data classes.
+     *
+     *     File Management Methods:
+     *         loadDiscountRulesFromRawResource(): Loads discount rules from a raw resource file if network and local cache fail.
+     *         loadDiscountRulesFromLocalFile(): Attempts to load discount rules from a locally cached file.
+     *
+     *     Main Repository Function getDiscountRules():
+     *         Manages the primary logic to fetch, cache, and retrieve discount rules using a combination of API calls and local file operations.
+     * */
+
+
+
     private val gsonWithRuntimeTypeAdapter = getGsonWithTypeAdapterFactory()
 
     private fun loadDiscountRulesFromRawResource(): DiscountConfig? {
@@ -100,7 +117,7 @@ class ProductRepositoryImpl(
     }
 
     private fun loadDiscountRulesFromLocalFile(): DiscountConfig? {
-        val jsonData = fileManager.readFromFile(DISCOUNTS_RULES_FILE)
+        val jsonData = fileManager.readFromFile(DISCOUNTS_RULES_FILE_NAME)
         return jsonData?.let {
             try {
                 gsonWithRuntimeTypeAdapter.fromJson(it, DiscountConfig::class.java)
@@ -109,6 +126,15 @@ class ProductRepositoryImpl(
             }
         }
     }
+
+    /**
+     *    Network Request: Initiates an API call to fetch discount rules. If successful,
+     *    the data is serialized into JSON and saved to a local file for caching.
+     *     Error Handling: If the API call fails (e.g., due to network issues),
+     *     the method attempts to load the discount rules from a locally cached file.
+     *     Fallback Mechanism: If both the network call and local file read fail, it attempts to load the discount rules from a
+     *     raw resource bundled with the app, ensuring that some form of data is always available.
+     *  */
 
     override suspend fun getDiscountRules(): Flow<Resource<DiscountConfig>> = flow {
         try {
@@ -119,7 +145,7 @@ class ProductRepositoryImpl(
                 gsonWithRuntimeTypeAdapter.toJson(discountRules)
             }
             withContext(Dispatchers.IO) {
-                fileManager.saveToFile(DISCOUNTS_RULES_FILE, json)
+                fileManager.saveToFile(DISCOUNTS_RULES_FILE_NAME, json)
             }
             emit(Resource.Success(discountRules))
         } catch (apiException: Exception) {

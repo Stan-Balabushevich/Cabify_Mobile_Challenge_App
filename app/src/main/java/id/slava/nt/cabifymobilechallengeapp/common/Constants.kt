@@ -7,4 +7,4 @@ const val TSHIRT = "TSHIRT"
 const val MUG = "MUG"
 
 /* file names constants*/
-const val DISCOUNTS_RULES_FILE = "discount_rules.json"
+const val DISCOUNTS_RULES_FILE_NAME = "discount_rules.json"
