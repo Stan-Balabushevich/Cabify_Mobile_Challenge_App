@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder
 import id.slava.nt.cabifymobilechallengeapp.data.remote.RuntimeTypeAdapterFactory
 import id.slava.nt.cabifymobilechallengeapp.data.remote.dt_object.ProductDiscount
 
-Discounts// Gson with RuntimeTypeAdapterFactory for handling complex JSON for discounts
+// Gson with RuntimeTypeAdapterFactory for handling complex JSON for discounts
 fun getGsonWithTypeAdapterFactory(): Gson =
  GsonBuilder()
     .registerTypeAdapterFactory(

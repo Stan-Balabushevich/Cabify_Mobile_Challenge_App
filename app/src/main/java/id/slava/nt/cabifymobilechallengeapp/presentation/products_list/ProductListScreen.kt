@@ -41,7 +41,6 @@ fun ProductListScreen(viewModel: ProductListViewModel = koinViewModel()) {
     val context = LocalContext.current
     val discountDescriptionText = viewModel.discountDescriptions.value
 
-
     // Display discount dialog
     if (showDiscountDialog.value) {
         val counts = viewModel.countSpecificItems()
@@ -70,19 +69,11 @@ fun ProductListScreen(viewModel: ProductListViewModel = koinViewModel()) {
         Column(modifier = Modifier
             .fillMaxSize()
             .padding(top = 50.dp)) {
-//            Text(
-//                stringResource(R.string.products_to_select),
-//                style = MaterialTheme.typography.bodyLarge,
-//                modifier = Modifier
-//                    .padding(8.dp)
-//                    .align(Alignment.Start)
-//            )
             Column(modifier = Modifier.padding(6.dp)) {
                 discountDescriptionText.forEach { description ->
                     Text(text = description, style = MaterialTheme.typography.bodySmall)
                 }
             }
-
             // Displaying the product to select list
             LazyColumn(modifier = Modifier
                 .weight(1f)
@@ -110,7 +101,6 @@ fun ProductListScreen(viewModel: ProductListViewModel = koinViewModel()) {
                         })
                     }
                 }
-
                 // Display total price
                 Text(
                     stringResource(R.string.price_without_discount, totalPrice),
@@ -119,7 +109,6 @@ fun ProductListScreen(viewModel: ProductListViewModel = koinViewModel()) {
                         .padding(8.dp)
                         .align(Alignment.Start)
                 )
-
             // Handle loading and error states
             if (state.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))

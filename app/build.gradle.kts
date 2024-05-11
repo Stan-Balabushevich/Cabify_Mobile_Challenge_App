@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.devtools.ksp)
+    alias(libs.plugins.mannodermaus.junit5)
 }
 
 android {
@@ -62,6 +63,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.firebase.crashlytics.buildtools)
     testImplementation(libs.junit)
+    testImplementation(libs.junit.jupiter)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -93,4 +95,22 @@ dependencies {
     testImplementation (libs.koin.test)
     // Needed JUnit version
     testImplementation (libs.koin.test.junit4)
+
+    testImplementation (libs.junit.jupiter.api)
+    testRuntimeOnly (libs.junit.jupiter.engine)
+    testImplementation (libs.junit.jupiter.params)
+
+
+    testImplementation(libs.assertk.jvm)
+    testImplementation(libs.mockwebserver)
+
+    implementation(libs.kotlinx.coroutines.test)
+
+// Mockito
+    testImplementation (libs.mockito.core)
+    androidTestImplementation (libs.mockito.android)
+
+    // testing flows
+    testImplementation (libs.turbine)
+    androidTestImplementation (libs.turbine)
 }

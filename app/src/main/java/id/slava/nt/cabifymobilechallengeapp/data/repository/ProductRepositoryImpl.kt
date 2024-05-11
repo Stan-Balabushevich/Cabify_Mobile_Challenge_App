@@ -156,7 +156,7 @@ class ProductRepositoryImpl(
             } ?: run {
                 val fallbackRules = withContext(Dispatchers.IO) { loadDiscountRulesFromRawResource() }
                 fallbackRules?.let {
-                    emit(Resource.Success(fallbackRules))
+//                    emit(Resource.Success(fallbackRules))
                 }
                 return@flow
             }

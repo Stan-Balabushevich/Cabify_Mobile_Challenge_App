@@ -75,6 +75,30 @@ class ProductListViewModel(
         cart.clear()
     }
 
+    init {
+        loadProducts()
+        getDiscountRules()
+    }
+
+    // Initial load products from the repository
+    private fun loadProducts() {
+        viewModelScope.launch {
+            getProductsUseCase().collect { resource ->
+                when (resource) {
+                    is Resource.Loading -> _products.value =
+                        ProductListState(isLoading = true)
+
+                    is Resource.Success -> _products.value =
+                        ProductListState(products = resource.data ?: emptyList())
+
+                    is Resource.Error -> _products.value = ProductListState(
+                        error = resource.message ?: "An unexpected error occurred"
+                    )
+                }
+            }
+        }
+    }
+
     /**
      * Fetches discount rules using the GetDiscountRulesUseCase and updates the discountRules StateFlow.
      * Upon successful fetch, it composes descriptive text for each product based on their discount type
@@ -140,7 +164,6 @@ class ProductListViewModel(
         }
     }
 
-
     fun calculateTotalWithDiscount(): Double {
         var total = 0.0
         cart.forEach { cartItem ->
@@ -185,29 +208,4 @@ class ProductListViewModel(
 
         return counts
     }
-
-    init {
-        loadProducts()
-        getDiscountRules()
-    }
-
-    // Initial load products from the repository
-    private fun loadProducts() {
-        viewModelScope.launch {
-            getProductsUseCase().collect { resource ->
-                when (resource) {
-                    is Resource.Loading -> _products.value =
-                        ProductListState(isLoading = true)
-
-                    is Resource.Success -> _products.value =
-                        ProductListState(products = resource.data ?: emptyList())
-
-                    is Resource.Error -> _products.value = ProductListState(
-                        error = resource.message ?: "An unexpected error occurred"
-                    )
-                }
-            }
-        }
-    }
-
 }
