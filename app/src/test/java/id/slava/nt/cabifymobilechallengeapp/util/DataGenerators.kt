@@ -1,6 +1,5 @@
 package id.slava.nt.cabifymobilechallengeapp.util
 
-import androidx.compose.ui.layout.LastBaseline
 import id.slava.nt.cabifymobilechallengeapp.data.local.database.db_object.ProductEntity
 import id.slava.nt.cabifymobilechallengeapp.data.remote.dt_object.ProductDiscount
 import id.slava.nt.cabifymobilechallengeapp.data.remote.dt_object.ProductDto
@@ -23,8 +22,8 @@ fun productEntity(): ProductEntity = ProductEntity(
 fun productDto(): ProductDto = ProductDto(code = "1", name = "Product 1", price = 100.0)
 
 fun productBulkDiscount(): ProductDiscount.BulkDiscount =
-   ProductDiscount.BulkDiscount(10, 100.0)
+   ProductDiscount.BulkDiscount(3, 19.0)
 
 fun productBuyXGetYFreeDiscount(): ProductDiscount.BuyXGetYFree =
-ProductDiscount.BuyXGetYFree(3, 1)
+ProductDiscount.BuyXGetYFree(2, 1)
 

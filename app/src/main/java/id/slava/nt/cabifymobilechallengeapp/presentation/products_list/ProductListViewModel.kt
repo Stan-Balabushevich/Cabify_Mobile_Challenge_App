@@ -1,6 +1,5 @@
 package id.slava.nt.cabifymobilechallengeapp.presentation.products_list
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -40,8 +39,8 @@ class ProductListViewModel(
     // If you foresee a need for more complex state management or sharing state across different parts of your app, consider using StateFlow<T>.
 
     // StateFlow for tracking the list of products.
-    private val _products = mutableStateOf(ProductListState())
-    val products: State<ProductListState> = _products
+    private val _products = MutableStateFlow(ProductListState())
+    val products: StateFlow<ProductListState> = _products
 
     // Mutable list to manage the shopping cart items.
     private val cart = mutableListOf<CartItem>()
@@ -112,7 +111,6 @@ class ProductListViewModel(
                     is Resource.Loading -> {}
                     is Resource.Success -> {
                         discountRules.value = resource.data
-                        Log.d("ProductListViewModel", "Discount rules fetched and stored")
                         // Compose text for each product
                         val descriptions = products.value.products.map { product ->
                             val discount = discountRules.value?.discounts?.get(product.code)
@@ -130,10 +128,6 @@ class ProductListViewModel(
 
                     is Resource.Error -> {
                         _discountDescriptions.value = listOf(resourceProvider.getString(R.string.error_loading_discounts))
-                        Log.e(
-                            "ProductListViewModel",
-                            "Failed to fetch discount rules: ${resource.message}"
-                        )
                     }
                 }
             }

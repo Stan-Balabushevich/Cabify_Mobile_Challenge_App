@@ -8,20 +8,25 @@ import kotlinx.coroutines.flow.flow
 class FakeProductDao: ProductDao {
 
     private val productsDB = mutableListOf<ProductEntity>()
-    var shouldReturnError = false
+    var shouldReturnErrorSaveToDatabase = false
+    var shouldReturnErrorGetFromDatabase = false
+    var recentUpdate: Long? = null
 
     override fun getAllProducts(): Flow<List<ProductEntity>> = flow {
-        if (shouldReturnError) {
+        if (shouldReturnErrorGetFromDatabase) {
             throw Exception("Database error")
         }
         emit(productsDB)
     }
 
     override suspend fun getMostRecentUpdate(): Long? {
-        return productsDB.maxOfOrNull { it.lastUpdated }
+        return recentUpdate
     }
 
     override suspend fun saveProducts(products: List<ProductEntity>) {
+        if (shouldReturnErrorSaveToDatabase) {
+            throw Exception("Database error")
+        }
         productsDB.addAll(products)
     }
 

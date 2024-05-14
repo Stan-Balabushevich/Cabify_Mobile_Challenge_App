@@ -3,23 +3,28 @@ package id.slava.nt.cabifymobilechallengeapp.data
 import id.slava.nt.cabifymobilechallengeapp.data.local.files.FileManager
 
 class FakeFileManager : FileManager {
-    private val files = mutableMapOf<String, String>()
-    private val resources = mutableMapOf<Int, String>()
-
-    override fun saveToFile(filename: String, data: String) {
-        files[filename] = data
-    }
+    var isFileSaved = false
+    private var fileContent: String? = null
+    private var rawContent: String? = null
 
     override fun readFromFile(filename: String): String? {
-        return files[filename]
+        return fileContent
+    }
+
+    override fun saveToFile(filename: String, data: String) {
+        isFileSaved = true
     }
 
     override fun readFromRawResource(resourceId: Int): String? {
-        return resources[resourceId]
+        return rawContent
     }
 
-    // Helper method to simulate adding resources in tests
-    fun addResource(resourceId: Int, data: String) {
-        resources[resourceId] = data
+    fun setLocalFileContent(content: String?) {
+        fileContent = content
+    }
+
+    fun setRawResourceContent(content: String?) {
+        rawContent = content
     }
 }
+

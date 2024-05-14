@@ -2,13 +2,14 @@ package id.slava.nt.cabifymobilechallengeapp.data.repository
 
 import id.slava.nt.cabifymobilechallengeapp.common.Resource
 import id.slava.nt.cabifymobilechallengeapp.data.remote.dt_object.DiscountConfig
-import id.slava.nt.cabifymobilechallengeapp.data.remote.dt_object.ProductDiscount
 import id.slava.nt.cabifymobilechallengeapp.domain.model.Product
 import id.slava.nt.cabifymobilechallengeapp.domain.repository.ProductRepository
+import id.slava.nt.cabifymobilechallengeapp.util.product
+import id.slava.nt.cabifymobilechallengeapp.util.productBulkDiscount
+import id.slava.nt.cabifymobilechallengeapp.util.productBuyXGetYFreeDiscount
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 
 class FakeProductRepository : ProductRepository {
 
@@ -16,16 +17,19 @@ class FakeProductRepository : ProductRepository {
 
     // Define your predefined list of products for testing
     val productList = listOf(
-        Product(1, "product1", "Product 1", 10.0),
-        Product(2, "product2", "Product 2", 15.0),
-        Product(3, "product3", "Product 3", 20.0)
+        product().copy(id = 1, price = 10.0),
+        product().copy(id = 2, price = 15.0),
+        product().copy(id = 3, price = 20.0),
+        product().copy(id = 4, price = 30.0),
+        product().copy(id = 5, price = 40.0),
+
     )
 
     // Define your predefined DiscountConfig for testing
     val discountConfig = DiscountConfig(
         mapOf(
-            "product1" to ProductDiscount.BuyXGetYFree(2, 1),
-            "product2" to ProductDiscount.BulkDiscount(5, 10.0)
+            "product1" to productBuyXGetYFreeDiscount(),
+            "product2" to productBulkDiscount()
         )
     )
     override suspend fun getProducts(): Flow<Resource<List<Product>>> = flow{

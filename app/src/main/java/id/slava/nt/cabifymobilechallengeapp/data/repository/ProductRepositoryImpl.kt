@@ -17,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
@@ -51,47 +52,59 @@ class ProductRepositoryImpl(
     override suspend fun getProducts(): Flow<Resource<List<Product>>> = flow {
         emit(Resource.Loading())
 
-        val lastUpdate = withContext(Dispatchers.IO) {
-            dao.getMostRecentUpdate() ?: 0L
-        }
+        val lastUpdate = dao.getMostRecentUpdate() ?: 0L
         val currentTime = System.currentTimeMillis()
         val oneDayMillis = 24 * 60 * 60 * 1000  // Represents one day in milliseconds.
 
         // Check if the current data is older than one day.
         if (currentTime - lastUpdate > oneDayMillis) {
             try {
-                // Fetch new data from the API and perform database operations in IO dispatcher.
-                val remoteProducts = withContext(Dispatchers.IO) {
+                // Fetch new data from the API
                     val products = productApi.getProducts().products.map { it.toProductEntity() }
                     products.forEach { it.lastUpdated = currentTime }
 
-                    // Perform database operations
-                    dao.deleteAllProducts()
-                    dao.saveProducts(products)
+                    // Emit the freshly fetched and mapped products immediately
+                    emit(Resource.Success(products.map { it.toProduct() }))
 
-                    products
-                }
-            } catch (e: Exception) {
-                // Log or handle the exception appropriately.
-                emit(Resource.Error(e.message ?: "An error occurred"))
+                    // Perform database operations
+                    try {
+                        dao.deleteAllProducts()
+                        dao.saveProducts(products)
+                    } catch (dbException: Exception) {
+                        emit(Resource.Error(dbException.message ?: "Database operation failed"))
+                    }
+
+                    products.map { it.toProduct() }
+
+            } catch (apiException: Exception) {
+                // Handle API exceptions
+                emit(Resource.Error(apiException.message ?: "Server error occurred"))
                 return@flow
             }
         }
 
         // Emit the current list of products from the database.
-        emitAll(
-            dao.getAllProducts()
-                .map { entities -> Resource.Success(entities.map { it.toProduct() }) }
-        )
-    }
+        try {
+            emitAll(
+                dao.getAllProducts()
+                    .map { entities -> Resource.Success(entities.map { it.toProduct() }) }
+            )
+        } catch (dbException: Exception) {
+            emit(Resource.Error(dbException.message ?: "An error occurred while reading from the database"))
+        }
+    }.flowOn(Dispatchers.IO)
+
 
 
     /**
-     * This segment of the code is part of a repository class responsible for fetching, caching, and providing fallback mechanisms for discount rules in an application. It uses a combination of Retrofit for network requests, Gson for JSON parsing, and a custom FileManager interface for file operations.
+     * This segment of the code is part of a repository class responsible for fetching, caching, and providing fallback mechanisms
+     * for discount rules in an application. It uses a combination of Retrofit for network requests, Gson for JSON parsing, and a custom
+     * FileManager interface for file operations.
      * Key Components
      *
      *     gsonWithRuntimeTypeAdapter:
-     *         A pre-configured Gson instance equipped with a RuntimeTypeAdapterFactory to handle polymorphic deserialization of JSON data into Kotlin data classes.
+     *         A pre-configured Gson instance equipped with a RuntimeTypeAdapterFactory to handle polymorphic deserialization of
+     *         JSON data into Kotlin data classes.
      *
      *     File Management Methods:
      *         loadDiscountRulesFromRawResource(): Loads discount rules from a raw resource file if network and local cache fail.
@@ -156,14 +169,11 @@ class ProductRepositoryImpl(
             } ?: run {
                 val fallbackRules = withContext(Dispatchers.IO) { loadDiscountRulesFromRawResource() }
                 fallbackRules?.let {
-//                    emit(Resource.Success(fallbackRules))
+                    emit(Resource.Success(fallbackRules))
                 }
                 return@flow
             }
         }
     }
-
-
-
 
 }

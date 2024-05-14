@@ -34,7 +34,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ProductListScreen(viewModel: ProductListViewModel = koinViewModel()) {
 
-    val state = viewModel.products.value
+    val state = viewModel.products.collectAsState()
     val cartProducts = viewModel.cartProducts.collectAsState()
     val totalPrice = cartProducts.value.sumOf { it.price}
     val showDiscountDialog = remember { mutableStateOf(false) }
@@ -78,7 +78,7 @@ fun ProductListScreen(viewModel: ProductListViewModel = koinViewModel()) {
             LazyColumn(modifier = Modifier
                 .weight(1f)
                 .padding(6.dp)) {
-                items(items = state.products) { product ->
+                items(items = state.value.products) { product ->
                     ProductItemCard(product = product, onProductSelected = {
                         viewModel.addCartProduct(product)
                     })
@@ -110,12 +110,12 @@ fun ProductListScreen(viewModel: ProductListViewModel = koinViewModel()) {
                         .align(Alignment.Start)
                 )
             // Handle loading and error states
-            if (state.isLoading) {
+            if (state.value.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
-            if (state.error.isNotBlank()) {
+            if (state.value.error.isNotBlank()) {
                 Text(
-                    text = state.error,
+                    text = state.value.error,
                     color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
