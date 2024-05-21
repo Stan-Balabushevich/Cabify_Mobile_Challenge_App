@@ -16,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -34,9 +35,9 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ProductListScreen(viewModel: ProductListViewModel = koinViewModel()) {
 
-    val state = viewModel.products.collectAsState()
-    val cartProducts = viewModel.cartProducts.collectAsState()
-    val totalPrice = cartProducts.value.sumOf { it.price}
+    val state by viewModel.products.collectAsState()
+    val cartProducts by viewModel.cartProducts.collectAsState()
+    val totalPrice = cartProducts.sumOf { it.price}
     val showDiscountDialog = remember { mutableStateOf(false) }
     val context = LocalContext.current
     val discountDescriptionText = viewModel.discountDescriptions.value
@@ -78,14 +79,14 @@ fun ProductListScreen(viewModel: ProductListViewModel = koinViewModel()) {
             LazyColumn(modifier = Modifier
                 .weight(1f)
                 .padding(6.dp)) {
-                items(items = state.value.products) { product ->
+                items(items = state.products) { product ->
                     ProductItemCard(product = product, onProductSelected = {
                         viewModel.addCartProduct(product)
                     })
                 }
             }
             Text(
-                text = stringResource(R.string.products_selected, cartProducts.value.size),
+                text = stringResource(R.string.products_selected, cartProducts.size),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
                     .padding(8.dp)
@@ -95,7 +96,7 @@ fun ProductListScreen(viewModel: ProductListViewModel = koinViewModel()) {
             LazyRow(modifier = Modifier
                 .weight(1f, fill = false)
                 .padding(6.dp)) {
-                    items(items = cartProducts.value) { cartProduct ->
+                    items(items = cartProducts) { cartProduct ->
                         ProductTag(product = cartProduct, modifier = Modifier.padding(6.dp), onProductTagClicked = {
                             viewModel.removeCartProduct(cartProduct)
                         })
@@ -110,12 +111,12 @@ fun ProductListScreen(viewModel: ProductListViewModel = koinViewModel()) {
                         .align(Alignment.Start)
                 )
             // Handle loading and error states
-            if (state.value.isLoading) {
+            if (state.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
-            if (state.value.error.isNotBlank()) {
+            if (state.error.isNotBlank()) {
                 Text(
-                    text = state.value.error,
+                    text = state.error,
                     color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
