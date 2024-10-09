@@ -4,6 +4,8 @@ import app.cash.turbine.test
 import id.slava.nt.cabifymobilechallengeapp.common.Resource
 import id.slava.nt.cabifymobilechallengeapp.data.remote.dt_object.DiscountConfig
 import id.slava.nt.cabifymobilechallengeapp.domain.model.Product
+import id.slava.nt.cabifymobilechallengeapp.domain.usecase.CalculateTotalWithDiscountUseCase
+import id.slava.nt.cabifymobilechallengeapp.domain.usecase.CountSpecificItemsUseCase
 import id.slava.nt.cabifymobilechallengeapp.domain.usecase.GetDiscountRulesUseCase
 import id.slava.nt.cabifymobilechallengeapp.domain.usecase.GetProductsUseCase
 import id.slava.nt.cabifymobilechallengeapp.presentation.resource.ResourceProvider
@@ -29,6 +31,8 @@ class ProductListViewModelTest {
     private lateinit var viewModel: ProductListViewModel
     private lateinit var getProductsUseCase: GetProductsUseCase
     private lateinit var getDiscountRulesUseCase: GetDiscountRulesUseCase
+    private lateinit var calculateTotalWithDiscountUseCase: CalculateTotalWithDiscountUseCase
+    private lateinit var countSpecificItemsUseCase: CountSpecificItemsUseCase
     private lateinit var resourceProvider: ResourceProvider
 
     private val testDispatcher = StandardTestDispatcher()
@@ -41,6 +45,8 @@ class ProductListViewModelTest {
         Dispatchers.setMain(testDispatcher)
         getProductsUseCase = mock()
         getDiscountRulesUseCase = mock()
+        calculateTotalWithDiscountUseCase = mock()
+        countSpecificItemsUseCase = mock()
         resourceProvider = mock()
 
         // Initialize shared variables
@@ -82,6 +88,8 @@ class ProductListViewModelTest {
         viewModel = ProductListViewModel(
             getProductsUseCase,
             getDiscountRulesUseCase,
+            calculateTotalWithDiscountUseCase,
+            countSpecificItemsUseCase,
             resourceProvider
         )
 
@@ -110,7 +118,7 @@ class ProductListViewModelTest {
         })
 
         // Act
-        viewModel = ProductListViewModel(getProductsUseCase, getDiscountRulesUseCase, resourceProvider)
+        viewModel = ProductListViewModel(getProductsUseCase, getDiscountRulesUseCase, calculateTotalWithDiscountUseCase, countSpecificItemsUseCase, resourceProvider)
 
         // Assert
         viewModel.products.test {
@@ -131,7 +139,7 @@ class ProductListViewModelTest {
         whenever(getDiscountRulesUseCase()).thenReturn(flow {
         })
 
-        viewModel = ProductListViewModel(getProductsUseCase, getDiscountRulesUseCase, resourceProvider)
+        viewModel = ProductListViewModel(getProductsUseCase, getDiscountRulesUseCase, calculateTotalWithDiscountUseCase, countSpecificItemsUseCase, resourceProvider)
 
 
         // Act
@@ -153,7 +161,7 @@ class ProductListViewModelTest {
         })
         whenever(getDiscountRulesUseCase()).thenReturn(flow {
         })
-        viewModel = ProductListViewModel(getProductsUseCase, getDiscountRulesUseCase, resourceProvider)
+        viewModel = ProductListViewModel(getProductsUseCase, getDiscountRulesUseCase, calculateTotalWithDiscountUseCase, countSpecificItemsUseCase, resourceProvider)
         viewModel.addCartProduct(product)
 
         // Act
